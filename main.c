@@ -3,16 +3,6 @@
 #include <ctype.h>
 #include <string.h>
 #define LENGHT 20
-#define SWAP_KEYS(A, B) {int t = A; A = B; B = t;}
-
-void swap_data(char *str1, char *str2)
-{
-  char *temp = (char *)malloc((strlen(str1) + 1) * sizeof(char));
-  strcpy(temp, str1);
-  strcpy(str1, str2);
-  strcpy(str2, temp);
-  free(temp);
-}  
 
 typedef enum {S1, S2} State;
 
@@ -40,14 +30,29 @@ int str_quantity(char* filename)
 	return(str_amount);
 }
 
+
 void table_print(Str *table, int str_amount)
 {	
 	printf("\n");
 	for (int i=0; i<str_amount; i++) {
-    	printf("%d ",table[i].key);
+    	printf("%d ",  table[i].key);
     	printf("%s\n", table[i].data);
    	}
    	printf("\n");
+}
+
+void table_sort_random(Str* table, int str_amount)
+{
+	int j;
+	srand(time(NULL));
+
+	for (int i = 0; i < str_amount; ++i) {
+		j = rand() % str_amount;
+		Str temp = table[j];
+		table[j] = table[i];
+		table[i] = temp;
+	}	
+	
 }
 
 void table_data_search(Str *table, int str_amount)
@@ -68,23 +73,48 @@ void table_data_search(Str *table, int str_amount)
 	}
 }
 
+void table_reverse(Str *table, int str_amount)
+{
+	for (int i = 0; i < (str_amount / 2); ++i) {
+		Str temp = table[i];
+		table[i] = table[str_amount - i - 1];
+		table[str_amount - i - 1] = temp;
+	}
+
+}
+
 void table_linear_sort(Str *table, int str_amount)
 {
 	for(int i = 0; i < (str_amount -1); i++) {
 		for (int j=(i + 1); j < str_amount; j++) {
 			if (table[j].key < table[i].key) {
-				SWAP_KEYS(table[j].key, table[i].key);
-				swap_data(table[j].data, table[i].data);
+				Str temp = table[j];
+				table[j] = table[i];
+				table[i] = temp;
 			}
 		}
 	}
 
-	for (int i=0; i<str_amount; i++) {
-    	printf("%d ",table[i].key);
-    	printf("%s\n", table[i].data);
-    }
-
 }
+
+void table_check_sort(Str* table, int str_amount)
+{
+	int flag = 0;
+	for (int i=0; i < str_amount; i++) {
+		if (table[i].key < table[i+1].key) {
+			flag++;
+		}
+	}
+	if (flag==str_amount-1) {
+		printf("Table has been already sorted\n");
+	} else
+	if (flag == 0) {
+		printf("Table is reversed\n");
+	} else {
+		printf("Table isn't sorted\n");
+	}
+}
+
 
 Str* table_create(char* filename, Str *table, int str_amount)
 {
@@ -101,7 +131,7 @@ Str* table_create(char* filename, Str *table, int str_amount)
             switch (s) {
                 case S1 :
                 	if (isdigit(c)) {
-	                	number=number*10+ to_number(c);
+	                	number = number * 10 + to_number(c);
 	                	s = S1;
 	                	break;
 	                } else if (c == ' ') {
@@ -130,8 +160,6 @@ Str* table_create(char* filename, Str *table, int str_amount)
 					} else {
 						break;
 					}
-					
-	
 			}		
 
         } while ((c != EOF));        
@@ -151,12 +179,16 @@ int main (void) {
 
 	int str_amount=str_quantity(filename);
 	Str *table=(Str *)malloc(sizeof(Str)*str_amount);
-	table = table_create(&filename[0], table, str_amount);
+	table = table_create(filename, table, str_amount);
 	//table_data_search(table, str_amount);
-	table_print(table, str_amount);
+	//table_print(table, str_amount);
 	Str *table_new = table;
-	table_linear_sort(table_new, str_amount);
-
 	
+	table_reverse(table_new, str_amount);
+	/*table_print(table_new,str_amount);
+	table_linear_sort(table_new, str_amount);
+	table_print(table_new,str_amount);*/
+	//table_reverse(table_new, str_amount);
+	table_check_sort(table_new, str_amount);
 	return 0;
 }
