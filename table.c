@@ -20,11 +20,9 @@ int str_quantity(char* filename)
         printf("I/O Error: can't open file.\n");
         exit(1);
     }
+    char c;
     int str_amount = 0;
-    while (! feof(file)) {
-        fscanf(file, "%*[^\n]%*c");
-        str_amount++;
-    }
+    while(fscanf(file, "%c", &c) != EOF) if (c == '\n') str_amount++;
     fclose(file);
     return(str_amount);
 }
@@ -33,8 +31,8 @@ int str_quantity(char* filename)
 void table_print(Str *table, int str_amount)
 {   
     printf("\n");
-
-    for (int i=0; i<str_amount; i++) {
+    int i=0;
+    for (i=0; i<str_amount; i++) {
         printf("%d ",  table[i].key);
         printf("%s\n", table[i].data);
     }
@@ -73,10 +71,16 @@ void table_destroy(Str** table, int str_amount)
 
 void table_data_search(Str *table, int str_amount)
 {   
-    int key_to_search = 0;
+    //int key_to_search = 0;
     printf("Input the key to search in the table:\n");
-    scanf("%d", &key_to_search);
+    char str_key[20];
+    scanf("%s", str_key);
+    if ((strlen(str_key)!=1) && (atoi(str_key) ==0)) {
+        printf("Key must be integer\n");
+        return;
+    }
     int flag = 0;
+    int key_to_search=atoi(str_key);
     for (int i=0; i<str_amount;i++) {
         if (table[i].key == key_to_search) {
             flag = 1;
@@ -117,12 +121,13 @@ void table_linear_sort(Str *table, int str_amount)
 void table_check_sort(Str* table, int str_amount)
 {
     int flag = 0;
-    for (int i=0; i < str_amount; i++) {
+    int i=0;
+    for (i=0; i < str_amount-1; i++) {
         if (table[i].key < table[i+1].key) {
             flag++;
         }
     }
-    if (flag==str_amount-1) {
+    if (flag == str_amount - 1) {
         printf("Table is sorted\n");
     } else
     if (flag == 0) {
@@ -133,24 +138,25 @@ void table_check_sort(Str* table, int str_amount)
 }
 
 
-Str* table_create(char* filename, Str *table, int str_amount)
+Str* table_create(char* filename, int str_amount)
 {
     FILE *file = fopen(filename, "r");
     if (!file) {
         printf("I/O Error: can't open file.\n");
         exit(1);
     }
-    int c;
+    Str* table=(Str *)malloc(sizeof(Str)*str_amount);
+    char c;
     int j=0;
     int i=0;
     int lenght= LENGHT;
     int number=0;
     State s = S1; 
-    while (i != str_amount - 1) {
-        do {
-            c = fgetc(file);
+   if  (i != str_amount - 1) {
+        while ((c = fgetc(file))!=EOF) {
             switch (s) {
                 case S1 :
+                    
                     if (isdigit(c)) {
                         number = number * 10 + to_number(c);
                         s = S1;
@@ -160,9 +166,9 @@ Str* table_create(char* filename, Str *table, int str_amount)
                         number=0;
                         s = S2;
                         break;
-                    }  
-
+                    } 
                 case S2 :
+                    
                     if ((c != EOF) && (c!='\n')) {
                         if (j == 0) {
                             table[i].data= (char*) malloc(lenght * sizeof(char*));
@@ -172,21 +178,25 @@ Str* table_create(char* filename, Str *table, int str_amount)
                             table[i].data = (char *) realloc(table[i].data, lenght * sizeof(char*));
                         }
                         table[i].data[j++]=c;
+                        s=S2;
                         break;
-                    } else if (c =='\n') {
-                        i++;
+                    } else if ((c =='\n')) {
+                        table[i].data[j++]= '\0';
+                        ++i;
                         j=0;
                         s=S1;
                         break;
-                    } else {
-                        break;
                     }
             }       
-
-        } while ((c != EOF));        
+        }       
 
     }
+    /*for (i=0; i<str_amount; i++) {
+        printf("%d ",  table[i].key);
+        printf("%s\n", table[i].data);
+    }*/
     fclose(file);
-    return(table);
+   return(table);
+    
     
 }
