@@ -111,7 +111,7 @@ void table_linear_sort(Str *table, int str_amount)
             }
         }
     }
-
+    printf("Table has been successfully sorted\n");
 }
 
 void table_check_sort(Str* table, int str_amount)
@@ -123,7 +123,7 @@ void table_check_sort(Str* table, int str_amount)
         }
     }
     if (flag==str_amount-1) {
-        printf("Table has been already sorted\n");
+        printf("Table is sorted\n");
     } else
     if (flag == 0) {
         printf("Table is reversed\n");
