@@ -3,7 +3,7 @@
 
 #include "table.h"
 
-typedef enum {S1, S2} State;
+typedef enum {S1, S2, S3} State;
 
 struct str {
     int key ;
@@ -21,7 +21,7 @@ void table_data_search(Str *table, int str_amount);
 void table_reverse(Str *table, int str_amount);
 void table_linear_sort(Str *table, int str_amount);
 void table_check_sort(Str* table, int str_amount);
-Str* table_create(char* filename, Str *table, int str_amount);
+Str* table_create(char* filename, int str_amount);
 
 
 #endif
