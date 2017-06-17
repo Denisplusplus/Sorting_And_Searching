@@ -1,2 +1,4 @@
-# Sorting_And_Searching
-Course work №9 in computer science | Second semester
+# Sorting And Searching
+### The task:
+1) linear sort with exchange
+2) type of the key is integer
