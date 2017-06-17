@@ -9,10 +9,11 @@ int main (void) {
 	char filename[10];
 	printf("Enter the name of file:\n");
 	scanf("%s", filename);
-	int str_amount=str_quantity(filename);
-	Str *table=(Str *)malloc(sizeof(Str)*str_amount);
-	table = table_create(filename, table, str_amount);
+	int str_amount=str_quantity(&filename[0]);
 
+	
+	Str* table = table_create(filename,str_amount);
+	
 	char action[4];
 	menu();
     do
